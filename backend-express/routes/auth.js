@@ -3,6 +3,9 @@ const User = require('../model/user')
 const validation = require('../functions/validation')
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
+const cors = require('cors');
+
+router.use(cors());
 
 router.post('/register', async (req, res) => {
     console.log(req.body);
@@ -31,7 +34,10 @@ router.post('/register', async (req, res) => {
     })
     try {
         const savedUser = await user.save()
-        res.status(200).json(savedUser)
+        res.status(200).json({
+            message: "User Registered!",
+            details: savedUser
+        })
     } catch (err) {
         res.status(400).json({
             error: err
@@ -63,7 +69,8 @@ router.post('/login', async (req, res) => {
     }, "1CC9A79BDAF09793062750A17E559D40D5C0F1372CC859F67FE1081E6BC8A307")
     return res.header('auth_token', token).status(200).json({
         username: user.name,
-        access_level: user.accessLevel
+        access_level: user.accessLevel,
+        auth_token: token
     })
 })
 

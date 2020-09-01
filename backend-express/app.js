@@ -2,8 +2,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const dotenv = require('dotenv').config()
-const lightRoutes = require('./routes/lights')
-const sensorRoutes = require('./routes/sensors')
+const l3routes = require('./routes/level3')
 
 // port that backend uses to listen to incoming api calls
 const PORT = process.env.PORT || 5000;
@@ -11,11 +10,8 @@ const PORT = process.env.PORT || 5000;
 // starting point
 const app = express()
 
-// serving static docs
-app.use(express.static(`${__dirname}/public/generated-docs`))
-
 // connection to mongodb
-mongoose.connect(process.env.MONGO_URL, {
+mongoose.connect('mongodb+srv://backenduser:buser@main.ssnqg.mongodb.net', {
     useNewUrlParser: true,
     useUnifiedTopology: true
 }).then(() => console.log("db connection successful")).catch(error => console.error(error));
@@ -26,9 +22,7 @@ const authRoute = require('./routes/auth')
 // middlewares
 app.use(express.json())
 app.use('/api/user', authRoute)
-app.use('/api/lights', lightRoutes)
-app.use('/api/sensors', sensorRoutes)
-
+app.use('/api/level3', l3routes)
 
 // endpoint for / route
 /**
@@ -41,11 +35,11 @@ app.use('/api/sensors', sensorRoutes)
  *	Backend API / route
  * }
  * */
-app.get('/', (req, res)=>{
-	res.sendFile(`${__dirname}/public/generated-docs/index.html`);
+app.get('/', (req, res) => {
+    res.status(200).send('Backend API / route');
 });
 
 // listen on assigned port
-app.listen(PORT, ()=>{
-	console.log(`listening on http://localhost:${PORT}`);
+app.listen(PORT, () => {
+    console.log(`listening on http://localhost:${PORT}`);
 })
